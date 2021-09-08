@@ -1,0 +1,98 @@
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="titulo">Tarjeta Crédito</h3>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="titulo">AGREGAR TARJETA</h5>
+                    <form [formGroup]="form" (ngSubmit)="addTarjeta()">
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"
+                                    [class.green-icon]="this.form.get('cardholder')?.valid"
+                                    [class.red-icon]="this.form.get('cardholder')?.invalid && this.form.get('cardholder')?.touched">
+                                </i>
+                            </span>
+                            <input formControlName="cardholder" type="text" class="form-control" placeholder="cardholder">
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="far fa-credit-card"
+                                    [class.green-icon]="this.form.get('ccn')?.valid"
+                                    [class.red-icon]="this.form.get('ccn')?.invalid && this.form.get('ccn')?.touched">
+                                </i>
+                            </span>
+                            <input formControlName="ccn" type="text" class="form-control" placeholder="CCN" maxlength="16">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="input-group input-group-lg mb-3">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-key"
+                                            [class.green-icon]="this.form.get('cvv')?.valid"
+                                            [class.red-icon]="this.form.get('cvv')?.invalid && this.form.get('cvv')?.touched">
+                                        </i>
+                                    </span>
+                                    <input formControlName="cvv" type="password" class="form-control" placeholder="CVV" maxlength="3">
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="input-group input-group-lg mb-3">
+                                    <span class="input-group-text">
+                                        <i class="far fa-calendar"
+                                            [class.green-icon]="this.form.get('expire')?.valid"
+                                            [class.red-icon]="this.form.get('expire')?.invalid && this.form.get('expire')?.touched">
+                                        </i>
+                                    </span>
+                                    <input formControlName="expire" type="text" class="form-control" placeholder="MM/YY" maxlength="5">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fa fa-database" aria-hidden="true"></i>&nbsp;Aceptar
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="titulo">Listado de Tarjetas</h5>
+                    <table class="table">
+                        <tr *ngFor="let tarjeta of listTarjetasCredito">
+                            <td>
+                                {{tarjeta.cardholder}}
+                            </td>
+                            <td>
+                                {{tarjeta.ccn}}
+                            </td>
+                            <td>
+                                {{tarjeta.expire}}
+                            </td>
+                            <td>
+                                <i class="far fa-edit text-info"></i>
+                            </td>
+                            <td>
+                                <i class="fas fa-trash text-danger"></i>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
