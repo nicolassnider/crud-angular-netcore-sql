@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-tarjeta-credito',
@@ -16,7 +17,7 @@ export class TarjetaCreditoComponent implements OnInit {
   
   form:FormGroup;
   
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private toastr:ToastrService) {
     this.form=this.fb.group({
       cardholder:['',Validators.required],
       ccn:['',[Validators.required,Validators.maxLength(16),Validators.minLength(16)]],
@@ -36,7 +37,14 @@ export class TarjetaCreditoComponent implements OnInit {
       cvv:this.form.get('cvv')?.value
     }
     this.listTarjetasCredito.push(tarjeta);
+    this.toastr.success('La tarjeta fue registrada con éxito','Tarjeta Registrada')
     this.form.reset();
+  }
+
+  eliminarTarjeta(index:number){
+    console.log(index);
+    this.listTarjetasCredito.splice(index,1)
+    this.toastr.error('La tarjeta fue eliminada con éxito','Tarketa Eliminada')
   }
 
 }

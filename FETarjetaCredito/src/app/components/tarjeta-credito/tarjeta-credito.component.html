@@ -58,7 +58,7 @@
                             </div>
                         </div>
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success btn-lg">
+                            <button type="submit" class="btn btn-success btn-lg" [disabled]="this.form.invalid">
                                 <i class="fa fa-database" aria-hidden="true"></i>&nbsp;Aceptar
                             </button>
                         </div>
@@ -72,7 +72,7 @@
                 <div class="card-body">
                     <h5 class="titulo">Listado de Tarjetas</h5>
                     <table class="table">
-                        <tr *ngFor="let tarjeta of listTarjetasCredito">
+                        <tr *ngFor="let tarjeta of listTarjetasCredito; let i =index">
                             <td>
                                 {{tarjeta.cardholder}}
                             </td>
@@ -86,7 +86,7 @@
                                 <i class="far fa-edit text-info"></i>
                             </td>
                             <td>
-                                <i class="fas fa-trash text-danger"></i>
+                                <i (click)="eliminarTarjeta(i)" class="fas fa-trash text-danger"></i>
                             </td>
                         </tr>
 
