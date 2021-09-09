@@ -1,0 +1,6 @@
+ng g c componente
+
+Add-Migration v1.0.0
+
+ng c s service
+
