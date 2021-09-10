@@ -87,6 +87,7 @@ namespace BETarjetaCredito.Controllers
                 if (tarjeta == null) return NotFound();
 
                 _context.TarjetaCredito.Remove(tarjeta);
+                await _context.SaveChangesAsync();
                 return Ok(new { message = "tarjeta eliminadas con éxito" });
             }
             catch (Exception ex)

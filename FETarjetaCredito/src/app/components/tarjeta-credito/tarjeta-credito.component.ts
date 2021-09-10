@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { TarjetaService } from 'src/app/services/tarjeta.service';
 
 @Component({
   selector: 'app-tarjeta-credito',
@@ -9,42 +10,93 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class TarjetaCreditoComponent implements OnInit {
 
-  listTarjetasCredito: any[] =[
-    {cardholder:'Juan Perez',ccn:'1234567890123456',expire:'11/23',cvv:'123'},
-    {cardholder:'Card Holder 1',ccn:'1234567890123457',expire:'11/22',cvv:'124'},
-    {cardholder:'Card Holder 2',ccn:'1234567890123458',expire:'10/22',cvv:'125'}
+  listTarjetasCredito: any[] = [
+    
   ];
-  
-  form:FormGroup;
-  
-  constructor(private fb: FormBuilder, private toastr:ToastrService) {
-    this.form=this.fb.group({
-      cardholder:['',Validators.required],
-      ccn:['',[Validators.required,Validators.maxLength(16),Validators.minLength(16)]],
-      expire:['',[Validators.required,Validators.maxLength(5),Validators.minLength(5)]],
-      cvv:['',[Validators.required,Validators.maxLength(3),Validators.minLength(3)]],
-    })
+
+  accion:string = 'Agregar';
+
+  form: FormGroup;
+
+  id:number | undefined;
+
+  constructor(
+    private fb: FormBuilder,
+    private toastr: ToastrService,
+    private _tarjetaService: TarjetaService) {
+    this.form = this.fb.group(
+      {
+        cardholder: ['', Validators.required],
+        ccn: ['', [Validators.required, Validators.maxLength(16), Validators.minLength(16)]],
+        expire: ['', [Validators.required, Validators.maxLength(5), Validators.minLength(5)]],
+        cvv: ['', [Validators.required, Validators.maxLength(3), Validators.minLength(3)]],
+      })
   }
 
   ngOnInit(): void {
+    this.obtenerTarjetas();
   }
 
-  addTarjeta(){
-    const tarjeta:any ={
-      cardholder:this.form.get('cardholder')?.value,
-      ccn:this.form.get('ccn')?.value,
-      expire:this.form.get('expire')?.value,
-      cvv:this.form.get('cvv')?.value
+  obtenerTarjetas(){
+    this._tarjetaService.getListaTarjetas().subscribe(data=>
+      this.listTarjetasCredito=data, error=>{
+        console.log(error)
+      })
+  }
+
+  guardarTarjeta() {
+    const tarjeta: any = {
+      cardholder: this.form.get('cardholder')?.value,
+      ccn: this.form.get('ccn')?.value,
+      expire: this.form.get('expire')?.value,
+      cvv: this.form.get('cvv')?.value
     }
-    this.listTarjetasCredito.push(tarjeta);
-    this.toastr.success('La tarjeta fue registrada con éxito','Tarjeta Registrada')
-    this.form.reset();
+
+    if(this.id == undefined){
+      this._tarjetaService.saveTarjeta(tarjeta).subscribe(data=>{
+        this.toastr.success('La tarjeta fue registrada con éxito', 'Tarjeta Registrada');
+        this.obtenerTarjetas();
+        this.form.reset();
+      },error=>{
+        this.toastr.error('Ocurrió un error','Error')
+        console.log(error);
+      })
+    }
+
+    else{
+      tarjeta.id = this.id;
+      this._tarjetaService.updateTarjeta(this.id,tarjeta).subscribe(data=>{
+        this.form.reset();
+        this.accion='agregar';
+        this.id=undefined;
+        this.toastr.info('Tarjeta modificada con éxito','Modificada');
+        this.obtenerTarjetas();
+      },error=>{this.toastr.error('Ocurrió un error','Error')
+      console.log(error);})
+    }
+
+    
+    
+    
   }
 
-  eliminarTarjeta(index:number){
-    console.log(index);
-    this.listTarjetasCredito.splice(index,1)
-    this.toastr.error('La tarjeta fue eliminada con éxito','Tarketa Eliminada')
+  eliminarTarjeta(id: number) {
+    this._tarjetaService.deleteTarjeta(id).subscribe(data =>{
+      this.toastr.error('La tarjeta fue eliminada con éxito', 'Tarjeta Eliminada');
+      this.obtenerTarjetas();
+    }, error=>{console.log(error)} );
+    
   }
+
+  editarTarjeta(tarjeta:any){
+    this.accion='editar';
+    this.id = tarjeta.id;
+    this.form.patchValue({
+      cardholder : tarjeta.cardHolder,
+      ccn:tarjeta.ccn,
+      expire:tarjeta.expire,
+      cvv:tarjeta.cvv
+    })
+  } 
 
 }
